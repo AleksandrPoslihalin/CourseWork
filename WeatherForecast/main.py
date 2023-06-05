@@ -3,7 +3,7 @@ import pandas as pd
 import math
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Dense, SimpleRNN, LSTM
+from keras.layers import Dense, SimpleRNN, LSTM, Dropout
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from datetime import datetime, timedelta
@@ -54,8 +54,9 @@ def get_forecast():
 
         # Создание модели RNN
         model = Sequential()
-        model.add(LSTM(units=100, input_shape=(look_back, 1)))
-        model.add(Dense(units=25))
+        model.add(LSTM(units=32, input_shape=(look_back, 1)))
+        model.add(Dropout(0.2))
+        model.add(Dense(units=12))
         model.compile(loss='mean_squared_error', optimizer='adam')
 
         # Обучение модели
@@ -86,7 +87,7 @@ def get_forecast():
 
         #ПРОГНОЗИРОВАНИЕ НА БУДУЩИЙ ПЕРИОД ВРЕМЕНИ:
         # Определение промежутка времени для прогноза
-        future_time_steps = 56  # Количество временных шагов для прогноза в будущем
+        future_time_steps = 24  # Количество временных шагов для прогноза в будущем
 
         # Создание входных данных для прогноза
         future_input = test[-look_back:, :]  # Последние look_back значений из тестовой выборки
@@ -152,4 +153,3 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
