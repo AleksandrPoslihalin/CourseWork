@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Waether</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='WeatherStyle.css') }}">
+    </head>
+
+    <body>
+
+       <header>
+           <div class = "name" >
+                    <h1>Прогноз погоды</h1>
+          </div>
+           <div class = "local" >
+                    <p>Челябинск, Шершни</p>
+          </div>
+       </header>
+
+
+        <div class = "select_data">
+			<label for="date">Выберите доступную дату:</label>
+			<input type="date" id="date" name="date" min="{{min_date}}" max="{{max_date}}" onchange="updateDate()">
+		</div>
+
+		<div id = "table_title">
+			<p id="my_data"></p>
+		</div>
+
+
+            {% set batches = WeatherPrediction_list|batch(8) %}
+            {% for batch in batches %}
+            <div class="weather_table" id="{{ batch[0][0].date() }}">
+                <table>
+                    <tr>
+                        <th>Время</th>
+                        {% for item in batch %}
+                            <td>{{ item[0].strftime('%H:%M') }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Температура</th>
+                        {% for item in batch %}
+                            <td>{{ item[1]|float|int }}°C</td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </div>
+            {% endfor %}
+            <footer>
+              <div class="disclaimer-container">
+                <span class="disclaimer-line1">Проект является учебным</span>
+                <span class="disclaimer-line2">Не рекомендуется использовать в качестве единственного источника информации о погоде</span>
+              </div>
+            </footer>
+
+
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+          <script>
+            function updateDate() {
+                const date = document.getElementById('date').value;
+                document.getElementById('my_data').innerHTML = `Погода на ${date}:`;
+
+
+                const weatherTables = document.getElementsByClassName('weather_table');
+                for (let i = 0; i < weatherTables.length; i++) {
+                    if (weatherTables[i].id === date) {
+                        weatherTables[i].style.display = 'flex';
+                    } else {
+                        weatherTables[i].style.display = 'none';
+                    }
+                }
+            }
+         </script>
+
+
+
+
+
+
+		</body>
+	</html>
+
